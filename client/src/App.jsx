@@ -130,7 +130,7 @@ const About = () => {
       <div className="flex justify-center">
         <div className="text-gray-700 dark:text-gray-300 text-justify leading-relaxed text-lg max-w-5xl">
           <p>
-            I'm a frontend developer and designer passionate about crafting visually striking and user-focused web experiences. With a strong foundation in modern technologies like React, Tailwind CSS, and JavaScript, I bring both structure and storytelling into every interface I build. Driven by curiosity and a love for clean design, I approach development as both an art and a science. From turning wireframes into living, responsive layouts to optimizing usability across devices, my goal is to create digital spaces that feel intuitive and inspiring. Whether I’m collaborating on a team project or building independently, I value clarity, creativity, and code that speaks with purpose. Every line I write is part of a bigger vision — to connect, engage, elevate and ignite the web.
+            I'm a frontend developer and designer passionate about crafting visually striking and user-focused web experiences. With a strong foundation in modern technologies like React, Tailwind CSS, and JavaScript, I bring both structure and storytelling into every interface I build. Driven by curiosity and a love for clean design, I approach development as both an art and a science. From turning wireframes into living, responsive layouts to optimizing usability across devices, my goal is to create digital spaces that feel intuitive and inspiring. Whether I’m collaborating on a team project or building independently, I value clarity, creativity, and code that speaks with purpose. Every line I write is part of a bigger vision!
           </p>
         </div>
       </div>

@@ -5,6 +5,7 @@ import './App.css';
 import Particles from './components/Particles'; // Adjust the path as necessary
 import FlowingSkills from './components/FlowingSkills'; // Place after other imports
 import { ChevronDown } from "lucide-react";
+import emailjs from '@emailjs/browser'; // Add at the top
 
 
 
@@ -52,26 +53,80 @@ function App() {
 // NavBar section
 
 const NavBar = ({ darkMode, setDarkMode }) => {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
-    <nav className="fixed w-full bg-white dark:bg-gray-900 shadow-sm z-50">
-      <div className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-        <a href="#" className="text-2xl font-bold dark:text-white">Hania</a>
-        
-        <div className="hidden md:flex space-x-8">
-          <a href="#about" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 transition-colors">About</a>
-          <a href="#skills" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 transition-colors">Skills</a>
-          <a href="#projects" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 transition-colors">Projects</a>
-          <a href="#experience" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 transition-colors">Experience</a>
-          <a href="#contact" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 transition-colors">Contact</a>
+<nav className="fixed w-full bg-white dark:bg-gray-900 shadow-sm z-50 top-0">
+<div className="max-w-6xl mx-auto px-4 py-2 flex justify-between items-center">
+        {/* Left section: Logo + Dark Mode Toggle */}
+        <div className="flex items-center space-x-4">
+          <a href="#" className="text-2xl font-bold dark:text-white">Hania</a>
+          <button 
+            onClick={() => setDarkMode(!darkMode)}
+            className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {darkMode ? '☀️' : '🌙'}
+          </button>
         </div>
-        
-        <button 
-          onClick={() => setDarkMode(!darkMode)}
-          className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-          aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
-        >
-          {darkMode ? '☀️' : '🌙'}
-        </button>
+
+        {/* Right section: Navigation links + Mobile toggle */}
+        <div className="flex items-center space-x-4">
+          <div className="hidden md:flex space-x-8">
+            {[
+              { href: '#about', label: 'About' },
+              { href: '#skills', label: 'Skills' },
+              { href: '#projects', label: 'Projects' },
+              { href: '#experience', label: 'Experience' },
+              { href: '#contact', label: 'Contact' },
+            ].map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                className="text-gray-700 dark:text-gray-300 hover:text-blue-600 transition-colors"
+              >
+                {item.label}
+              </a>
+            ))}
+          </div>
+
+          {/* Mobile menu button */}
+          <div className="md:hidden">
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              aria-label="Toggle menu"
+            >
+              {menuOpen ? '✖️' : '☰'}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile menu dropdown */}
+      <div
+        className={`${
+          menuOpen
+            ? 'flex flex-col absolute top-full left-0 w-full bg-white dark:bg-gray-900 shadow-md z-40'
+            : 'hidden'
+        } md:hidden`}
+      >
+        {[
+          { href: '#about', label: 'About' },
+          { href: '#skills', label: 'Skills' },
+          { href: '#projects', label: 'Projects' },
+          { href: '#experience', label: 'Experience' },
+          { href: '#contact', label: 'Contact' },
+        ].map((item) => (
+          <a
+            key={item.href}
+            href={item.href}
+            className="text-gray-700 dark:text-gray-300 hover:text-blue-600 transition-colors px-4 py-2"
+            onClick={() => setMenuOpen(false)}
+          >
+            {item.label}
+          </a>
+        ))}
       </div>
     </nav>
   );
@@ -405,66 +460,109 @@ export  function Experience() {
 };
 
 // Contact section
-const Contact = () => (
-  <section id="contact" className="py-20 px-6 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100">
-    <div className="max-w-2xl mx-auto flex flex-col gap-12 items-stretch">
-      {/* 👋 Contact Intro (no box) */}
-      <div>
-        <h2 className="text-4xl text-center font-bold mb-12">Let's Connect</h2>
-        <p className="text-lg text-center leading-relaxed mb-2">
-          Have a spark of an idea or just curious about my work? Let’s turn that spark into something real — send me a note!
-        </p>
-        <p className="text-sm text-center">
-          Email me at{" "}
-          <a
-            href="mailto:haniaaziz095@gmail.com"
-            className="text-blue-400 hover:text-blue-500 transition-colors duration-200"
+const Contact = () => {
+  const [form, setForm] = useState({ name: '', email: '', message: '' });
+  const [status, setStatus] = useState('');
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.id]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setStatus('Sending...');
+    try {
+      await emailjs.send(
+        'service_jupv1wu', // your EmailJS service ID
+        'template_ddv3etj', // your EmailJS template ID
+        {
+          name: form.name,      // matches {{name}} in your template
+          email: form.email,    // matches {{email}} in your template
+          message: form.message // matches {{message}} in your template
+        },
+        'dJZqrxD7rQpMp1oQ-' // your EmailJS public key
+      );
+      setStatus('Message sent!');
+      setForm({ name: '', email: '', message: '' });
+    } catch (err) {
+      setStatus('Failed to send. Try again.');
+    }
+  };
+
+  return (
+    <section id="contact" className="py-20 px-6 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100">
+      <div className="max-w-2xl mx-auto flex flex-col gap-12 items-stretch">
+        {/* 👋 Contact Intro (no box) */}
+        <div>
+          <h2 className="text-4xl text-center font-bold mb-12">Let's Connect</h2>
+          <p className="text-lg text-center leading-relaxed mb-2">
+            Have a spark of an idea or just curious about my work? Let’s turn that spark into something real — send me a note!
+          </p>
+          <p className="text-sm text-center">
+            Email me at{" "}
+            <a
+              href="mailto:haniaaziz095@gmail.com"
+              className="text-blue-400 hover:text-blue-500 transition-colors duration-200"
+            >
+              haniaaziz095@gmail.com
+            </a>
+          </p>
+        </div>
+        {/* 📝 Contact Form with Glow */}
+        <div className="relative">
+          {/* Glow effect */}
+          <div className="absolute inset-0 rounded-xl z-0 bg-gradient-to-br from-blue-700/30 to-purple-700/30 blur-lg"></div>
+          <form
+            className="relative z-10 space-y-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8"
+            onSubmit={handleSubmit}
           >
-            haniaaziz095@gmail.com
-          </a>
-        </p>
+            <div>
+              <label htmlFor="name" className="block mb-2 font-medium">Your Name</label>
+              <input
+                type="text"
+                id="name"
+                value={form.name}
+                onChange={handleChange}
+                placeholder="Full Name"
+                className="w-full px-4 py-2 border rounded-md bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+            <div>
+              <label htmlFor="email" className="block mb-2 font-medium">Your Email</label>
+              <input
+                type="email"
+                id="email"
+                value={form.email}
+                onChange={handleChange}
+                placeholder="dev@email.com"
+                className="w-full px-4 py-2 border rounded-md bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+            <div>
+              <label htmlFor="message" className="block mb-2 font-medium">Message</label>
+              <textarea
+                id="message"
+                rows="3"
+                value={form.message}
+                onChange={handleChange}
+                placeholder="Say hello..."
+                className="w-full px-4 py-2 border rounded-md bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md transition-colors"
+            >
+              Send Message
+            </button>
+            {status && <p className="text-center mt-2 text-sm">{status}</p>}
+          </form>
+        </div>
       </div>
-      {/* 📝 Contact Form with Glow */}
-      <div className="relative">
-        {/* Glow effect */}
-        <div className="absolute inset-0 rounded-xl z-0 bg-gradient-to-br from-blue-700/30 to-purple-700/30 blur-lg"></div>
-        <form className="relative z-10 space-y-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
-          <div>
-            <label htmlFor="name" className="block mb-2 font-medium">Your Name</label>
-            <input
-              type="text"
-              id="name"
-              placeholder="Full Name"
-              className="w-full px-4 py-2 border rounded-md bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <div>
-            <label htmlFor="email" className="block mb-2 font-medium">Your Email</label>
-            <input
-              type="email"
-              id="email"
-              placeholder="dev@email.com"
-              className="w-full px-4 py-2 border rounded-md bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <div>
-            <label htmlFor="message" className="block mb-2 font-medium">Message</label>
-            <textarea
-              id="message"
-              rows="3"
-              placeholder="Say hello..."
-              className="w-full px-4 py-2 border rounded-md bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md transition-colors"
-          >
-            Send Message
-          </button>
-        </form>
-      </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 export default App;

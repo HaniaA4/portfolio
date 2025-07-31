@@ -194,7 +194,7 @@ const About = () => {
       <div className="flex justify-center">
         <div className="text-gray-700 dark:text-gray-300 text-justify leading-relaxed text-lg max-w-5xl">
           <p>
-            I'm a frontend developer and designer passionate about crafting visually striking and user-focused web experiences. With a strong foundation in modern technologies like React, Tailwind CSS, and JavaScript, I bring both structure and storytelling into every interface I build. Driven by curiosity and a love for clean design, I approach development as both an art and a science. From turning wireframes into living, responsive layouts to optimizing usability across devices, my goal is to create digital spaces that feel intuitive and inspiring. Whether I’m collaborating on a team project or building independently, I value clarity, creativity, and code that speaks with purpose. Every line I write is part of a bigger vision – to connect, engage, elevate and ignite the web.
+            I'm a Full Stack developer and designer passionate about crafting visually striking and user-focused web experiences. With a strong foundation in modern technologies like React, Tailwind CSS, and JavaScript, I bring both structure and storytelling into every interface I build. Driven by curiosity and a love for clean design, I approach development as both an art and a science. From turning wireframes into living, responsive layouts to optimizing usability across devices, my goal is to create digital spaces that feel intuitive and inspiring. Whether I’m collaborating on a team project or building independently, I value clarity, creativity, and code that speaks with purpose. Every line I write is part of a bigger vision – to connect, engage, elevate and ignite the web.
           </p>
         </div>
       </div>
@@ -205,7 +205,7 @@ const About = () => {
 // Skills section
 
 const frontendSkills = [
-  { link: '#', text: 'HTML5' },
+  { link: '#', text: 'HTML' },
   { link: '#', text: 'CSS' },
   { link: '#', text: 'JavaScript' },
   { link: '#', text: 'React' },
@@ -317,8 +317,8 @@ const Projects = () => {
           {projects.map((project, index) => (
             <div key={index} className="relative h-[400px]">
               {/* Glow effect */}
-              <div className="absolute inset-0 h-full w-full rounded-xl z-0 bg-gradient-to-br from-blue-300 to-blue-400 dark:from-blue-700/30 dark:to-purple-700/30 blur-lg"></div>
-
+              <div className="absolute inset-0 h-full w-full rounded-xl z-0 bg-gradient-to-br from-blue-300 to-blue-400 dark:from-blue-700/30 dark:to-purple-700/30 dark:blur-xl blur-lg"></div>
+              
               {/* Card content */}
               <div className="relative z-10 flex flex-col justify-between h-full p-6 rounded-xl border border-[#1A29FF]/20 shadow-lg bg-[#141F7C]/30 dark:bg-gray-800/50 backdrop-blur-lg">
                 <img
@@ -366,7 +366,7 @@ const timelineData = [
     date: "2025",
     details: [
       "Developed scalable, full-stack web applications.",
-      "Worked with web technologies like HTML, CSS, JavaScript, React, NodeJS, MongoDB, SQL.",
+      "Worked with web technologies like HTML, CSS, JavaScript, React, NodeJS, MongoDB, SQL, UX/UI.",
       "Won the Bytes4Future Hackathon with an incredible team, by creating an innovative app.",
     ],
   },
@@ -506,7 +506,7 @@ const Contact = () => {
   return (
     <section id="contact" className="py-20 px-6 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100">
       <div className="max-w-2xl mx-auto flex flex-col gap-12 items-stretch">
-        {/* 👋 Contact Intro (no box) */}
+        {/* Contact Intro */}
         <div>
           <h2 className="text-4xl text-center font-bold mb-12">Let's Connect</h2>
           <p className="text-lg text-center leading-relaxed mb-2">
@@ -545,10 +545,10 @@ const Contact = () => {
             </p>
         </div>
 
-        {/* 📝 Contact Form with Glow */}
+        {/* Contact Form with Glow */}
         <div className="relative">
           {/* Glow effect */}
-          <div className="absolute inset-0 rounded-xl z-0 bg-gradient-to-br from-blue-700/30 to-purple-700/30 blur-lg"></div>
+          <div className="absolute inset-0 rounded-xl z-0 bg-gradient-to-br from-blue-300 to-blue-300 dark:from-blue-700/30 dark:to-purple-700/30 blur-lg"></div>
           <form
             className="relative z-10 space-y-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8"
             onSubmit={handleSubmit}

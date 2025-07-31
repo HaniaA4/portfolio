@@ -1,154 +1,163 @@
-// App.jsx
-
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from "react";
 import './App.css';
-import Particles from './components/Particles'; // Adjust the path as necessary
-import FlowingSkills from './components/FlowingSkills'; // Place after other imports
+import Particles from './components/Particles'; 
+import FlowingSkills from './components/FlowingSkills'; 
 import { ChevronDown } from "lucide-react";
-import emailjs from '@emailjs/browser'; // Add at the top
-
+import { Moon, Sun } from "lucide-react";
+import emailjs from '@emailjs/browser'; 
+import { FaGithub, FaLinkedin } from "react-icons/fa";
 
 
 
 function App() {
-  const [darkMode, setDarkMode] = useState(() => {
-    // Check for saved preference or use system preference
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('darkMode');
-      if (saved !== null) {
-        return JSON.parse(saved);
-      }
-      return window.matchMedia('(prefers-color-scheme: dark)').matches;
-    }
-    return false;
-  });
+  const [darkMode, setDarkMode] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  // Apply dark mode class and save preference
   useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
+    const storedTheme = localStorage.getItem("theme");
+    if (storedTheme === "dark") {
+      setDarkMode(true);
+      document.documentElement.classList.add("dark");
     } else {
-      document.documentElement.classList.remove('dark');
+      setDarkMode(false);
+      document.documentElement.classList.remove("dark");
     }
-    localStorage.setItem('darkMode', JSON.stringify(darkMode));
-  }, [darkMode]);
+  }, []);
+
+  const toggleDarkMode = () => {
+    const newMode = !darkMode;
+    setDarkMode(newMode);
+    if (newMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  };
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'dark:bg-gray-900' : 'bg-white'}`}>
-      <NavBar darkMode={darkMode} setDarkMode={setDarkMode} />
+    <>
+      {/* Dark mode toggle button */}
+      <button
+        onClick={toggleDarkMode}
+        className="fixed top-5 right-5 z-50 p-2 rounded-full transition-colors duration-300 focus:outline-none"
+      >
+        {darkMode ? (
+          <Sun className="h-6 w-6 text-yellow-300" />
+        ) : (
+          <Moon className="h-6 w-6 text-blue-900" />
+        )}
+      </button>
 
+      <nav className="fixed w-full bg-white dark:bg-gray-900 shadow-sm z-50 top-0">
+        <div className="max-w-6xl mx-auto px-4 py-2 flex justify-between items-center">
+          
+          {/* Left section: Logo + Dark Mode Toggle */}
+          <div className="flex items-center space-x-4">
+            <a href="#" className="text-2xl font-bold dark:text-white">Hania</a>
+            <button
+              onClick={toggleDarkMode}
+              className="p-2 rounded-full transition-colors duration-300 focus:outline-none"
+              aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+            >
+              {darkMode ? (
+                <Sun className="h-6 w-6 text-yellow-200" />
+              ) : (
+                <Moon className="h-6 w-6 text-blue-600" />
+              )}
+            </button>
+          </div>
 
-      <main>
-        <Hero />
-        <About />
-        <Skills />
-        <Projects />
-        <Experience />
-        <Contact />
-      </main>
-    </div>
+          {/* Right section: Navigation links + Mobile toggle */}
+          <div className="flex items-center space-x-4">
+            <div className="hidden md:flex space-x-8">
+              {[
+                { href: '#about', label: 'About' },
+                { href: '#skills', label: 'Skills' },
+                { href: '#projects', label: 'Projects' },
+                { href: '#experience', label: 'Experience' },
+                { href: '#contact', label: 'Contact' },
+              ].map((item) => (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  className="text-gray-700 dark:text-gray-300 hover:text-blue-600 transition-colors"
+                >
+                  {item.label}
+                </a>
+              ))}
+            </div>
+
+            {/* Mobile menu button */}
+            <div className="md:hidden">
+              <button
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                aria-label="Toggle menu"
+              >
+                {menuOpen ? '✖️' : '☰'}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile menu dropdown */}
+        <div
+          className={`${
+            menuOpen
+              ? 'flex flex-col absolute top-full left-0 w-full bg-white dark:bg-gray-900 shadow-md z-40'
+              : 'hidden'
+          } md:hidden`}
+        >
+          {[
+            { href: '#about', label: 'About' },
+            { href: '#skills', label: 'Skills' },
+            { href: '#projects', label: 'Projects' },
+            { href: '#experience', label: 'Experience' },
+            { href: '#contact', label: 'Contact' },
+          ].map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              className="text-gray-700 dark:text-gray-300 hover:text-blue-600 transition-colors px-4 py-2"
+              onClick={() => setMenuOpen(false)}
+            >
+              {item.label}
+            </a>
+          ))}
+        </div>
+      </nav>
+
+      <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'dark:bg-gray-900' : 'bg-white'}`}>
+        <main>
+          <Hero darkMode={darkMode} />
+          <About />
+          <Skills />
+          <Projects />
+          <Experience />
+          <Contact />
+        </main>
+      </div>
+    </>
   );
 }
 
-// NavBar section
-
-const NavBar = ({ darkMode, setDarkMode }) => {
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  return (
-<nav className="fixed w-full bg-white dark:bg-gray-900 shadow-sm z-50 top-0">
-<div className="max-w-6xl mx-auto px-4 py-2 flex justify-between items-center">
-        {/* Left section: Logo + Dark Mode Toggle */}
-        <div className="flex items-center space-x-4">
-          <a href="#" className="text-2xl font-bold dark:text-white">Hania</a>
-          <button 
-            onClick={() => setDarkMode(!darkMode)}
-            className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-            aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
-          >
-            {darkMode ? '☀️' : '🌙'}
-          </button>
-        </div>
-
-        {/* Right section: Navigation links + Mobile toggle */}
-        <div className="flex items-center space-x-4">
-          <div className="hidden md:flex space-x-8">
-            {[
-              { href: '#about', label: 'About' },
-              { href: '#skills', label: 'Skills' },
-              { href: '#projects', label: 'Projects' },
-              { href: '#experience', label: 'Experience' },
-              { href: '#contact', label: 'Contact' },
-            ].map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                className="text-gray-700 dark:text-gray-300 hover:text-blue-600 transition-colors"
-              >
-                {item.label}
-              </a>
-            ))}
-          </div>
-
-          {/* Mobile menu button */}
-          <div className="md:hidden">
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              aria-label="Toggle menu"
-            >
-              {menuOpen ? '✖️' : '☰'}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile menu dropdown */}
-      <div
-        className={`${
-          menuOpen
-            ? 'flex flex-col absolute top-full left-0 w-full bg-white dark:bg-gray-900 shadow-md z-40'
-            : 'hidden'
-        } md:hidden`}
-      >
-        {[
-          { href: '#about', label: 'About' },
-          { href: '#skills', label: 'Skills' },
-          { href: '#projects', label: 'Projects' },
-          { href: '#experience', label: 'Experience' },
-          { href: '#contact', label: 'Contact' },
-        ].map((item) => (
-          <a
-            key={item.href}
-            href={item.href}
-            className="text-gray-700 dark:text-gray-300 hover:text-blue-600 transition-colors px-4 py-2"
-            onClick={() => setMenuOpen(false)}
-          >
-            {item.label}
-          </a>
-        ))}
-      </div>
-    </nav>
-  );
-};
-
 // Hero section
 
-const Hero = () => {
+const Hero = ({ darkMode }) => {
   return (
     <section
       id="home"
       className="h-screen flex flex-col justify-center items-center pt-24 relative overflow-hidden"
     >
       {/* Particle Background */}
-      <div className="absolute inset-0 -z-10"></div>
-<div style={{ width: '100%', height: '100%', position: 'absolute' }}>
-
-
+      <div className="absolute inset-0 -z-10 bg-white dark:bg-transparent"></div>
+      <div style={{ width: '100%', height: '100%', position: 'absolute' }}>
         <Particles
-          particleColors={['#ffffff', '#ffffff']}
+          particleColors={darkMode ? ['#ffffff'] : ['#4B5563', '#3B82F6']}
           particleCount={200}
-          particleSpread={10}
+          particleSpread={5}
           speed={0.1}
           particleBaseSize={100}
           moveParticlesOnHover={true}
@@ -163,11 +172,11 @@ const Hero = () => {
           Hi, I'm <span className="text-blue-600 dark:text-blue-400">Hania</span>
         </h1>
         <h2 className="text-2xl md:text-3xl dark:text-gray-300 mb-8">
-          Frontend Developer / Web Designer
+          Full Stack Developer & Designer
         </h2>
         <a
           href="#contact"
-          className="inline-block bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-full text-lg transition-all"
+          className="inline-block bg-blue-500 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-full text-lg transition-all"
         >
           Let's Build Together!
         </a>
@@ -185,7 +194,7 @@ const About = () => {
       <div className="flex justify-center">
         <div className="text-gray-700 dark:text-gray-300 text-justify leading-relaxed text-lg max-w-5xl">
           <p>
-            I'm a frontend developer and designer passionate about crafting visually striking and user-focused web experiences. With a strong foundation in modern technologies like React, Tailwind CSS, and JavaScript, I bring both structure and storytelling into every interface I build. Driven by curiosity and a love for clean design, I approach development as both an art and a science. From turning wireframes into living, responsive layouts to optimizing usability across devices, my goal is to create digital spaces that feel intuitive and inspiring. Whether I’m collaborating on a team project or building independently, I value clarity, creativity, and code that speaks with purpose. Every line I write is part of a bigger vision!
+            I'm a frontend developer and designer passionate about crafting visually striking and user-focused web experiences. With a strong foundation in modern technologies like React, Tailwind CSS, and JavaScript, I bring both structure and storytelling into every interface I build. Driven by curiosity and a love for clean design, I approach development as both an art and a science. From turning wireframes into living, responsive layouts to optimizing usability across devices, my goal is to create digital spaces that feel intuitive and inspiring. Whether I’m collaborating on a team project or building independently, I value clarity, creativity, and code that speaks with purpose. Every line I write is part of a bigger vision – to connect, engage, elevate and ignite the web.
           </p>
         </div>
       </div>
@@ -200,7 +209,7 @@ const frontendSkills = [
   { link: '#', text: 'CSS' },
   { link: '#', text: 'JavaScript' },
   { link: '#', text: 'React' },
-  { link: '#', text: 'Tailwind CSS' },
+  { link: '#', text: 'Tailwind' },
   { link: '#', text: 'TypeScript' },
   { link: '#', text: 'Next.js' },
 ];
@@ -215,7 +224,11 @@ const backendSkills = [
 
 const designSkills = [
   { link: '#', text: 'Figma' },
-  { link: '#', text: 'Canva' }
+  { link: '#', text: 'Canva' },
+  { link: '#', text: 'UX/UI' },
+  { link: '#', text: 'Design Systems' },
+  { link: '#', text: 'Wireframing' },
+  { link: '#', text: 'Prototyping' }
 ];
 
 const toolsSkills = [
@@ -224,7 +237,8 @@ const toolsSkills = [
   { link: '#', text: 'VS Code' },
   { link: '#', text: 'Dev-C++' },
   { link: '#', text: 'Notion' },
-  { link: '#', text: 'Jira' }
+  { link: '#', text: 'Jira' },
+  { link: '#', text: 'Sublime'}
 ];
 
 const Skills = () => {
@@ -275,8 +289,8 @@ const Projects = () => {
       title: 'Toytale',
       image: '/toytale.jpg',
       description:
-        'Developed an interactive peer-to-peer learning app where users trade skills and learn from each other.',
-      code: 'https://github.com/HaniaA4/ToyTale'
+        'A platform for families to donate, trade, or sell gently used toys and books—making decluttering easy, sustainable, and filled with childhood magic.',
+      github: 'https://github.com/HaniaA4/ToyTale'
     },
     {
       title: 'SkillSwap',
@@ -289,8 +303,8 @@ const Projects = () => {
       title: 'Spotidados',
       image: '/spotidados.jpg',
       description:
-        'A collaborative Figma-style editor built for seamless UI mockup sharing. Includes multi-user preview mode and SVG export.',
-      github: '#'
+        'A collaborative front-end Spotify analytics platform designed to provide personalized musical insights and statistics through engaging visuals that reveal unique listening habits.',
+      github: 'https://github.com/HaniaA4/GettingOutOfTheHood'
     }
   ];
 
@@ -303,10 +317,10 @@ const Projects = () => {
           {projects.map((project, index) => (
             <div key={index} className="relative h-[400px]">
               {/* Glow effect */}
-              <div className="absolute inset-0 h-full w-full rounded-xl z-0 bg-gradient-to-br from-blue-700/30 to-purple-700/30 blur-lg"></div>
+              <div className="absolute inset-0 h-full w-full rounded-xl z-0 bg-gradient-to-br from-blue-300 to-blue-400 dark:from-blue-700/30 dark:to-purple-700/30 blur-lg"></div>
 
               {/* Card content */}
-              <div className="relative z-10 flex flex-col justify-between h-full p-6 rounded-xl border border-[#1A29FF]/20 shadow-lg bg-[#141F7C]/30 dark:bg-gray-800/50 backdrop-blur-md">
+              <div className="relative z-10 flex flex-col justify-between h-full p-6 rounded-xl border border-[#1A29FF]/20 shadow-lg bg-[#141F7C]/30 dark:bg-gray-800/50 backdrop-blur-lg">
                 <img
                   src={project.image}
                   alt={`${project.title} Screenshot`}
@@ -319,7 +333,7 @@ const Projects = () => {
                     href={project.github}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-4 py-2 text-sm font-semibold border border-blue-500 rounded-full hover:bg-blue-500 hover:text-white transition-colors"
+                    className="px-4 py-2 text-sm font-semibold border-2 text-white dark:border-blue-200 rounded-full hover:border-blue-600 dark:hover:border-blue-400 transition-colors"
                   >
                     CODE
                   </a>
@@ -327,7 +341,7 @@ const Projects = () => {
                     href={project.vercel || '#'}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-4 py-2 ml-2 text-sm font-semibold border border-blue-500 rounded-full hover:bg-blue-500 hover:text-white transition-colors"
+                    className="px-4 py-2 ml-2 text-sm font-semibold border-2 text-white dark:border-blue-200 rounded-full hover:border-blue-600 dark:hover:border-blue-400 transition-colors"
                   >
                     PREVIEW
                   </a>
@@ -473,14 +487,14 @@ const Contact = () => {
     setStatus('Sending...');
     try {
       await emailjs.send(
-        'service_jupv1wu', // your EmailJS service ID
-        'template_ddv3etj', // your EmailJS template ID
+        'service_jupv1wu', //  EmailJS service ID
+        'template_ddv3etj', //  EmailJS template ID
         {
-          name: form.name,      // matches {{name}} in your template
-          email: form.email,    // matches {{email}} in your template
-          message: form.message // matches {{message}} in your template
+          name: form.name,      
+          email: form.email,      
+          message: form.message 
         },
-        'dJZqrxD7rQpMp1oQ-' // your EmailJS public key
+        'dJZqrxD7rQpMp1oQ-' //  EmailJS public key
       );
       setStatus('Message sent!');
       setForm({ name: '', email: '', message: '' });
@@ -499,15 +513,38 @@ const Contact = () => {
             Have a spark of an idea or just curious about my work? Let’s turn that spark into something real — send me a note!
           </p>
           <p className="text-sm text-center">
-            Email me at{" "}
-            <a
+           
+  <div className="flex items-center justify-center space-x-2 whitespace-nowrap text-sm">
+              Reach out anytime
+              <a
               href="mailto:haniaaziz095@gmail.com"
-              className="text-blue-400 hover:text-blue-500 transition-colors duration-200"
-            >
-              haniaaziz095@gmail.com
-            </a>
-          </p>
+              className="text-blue-400 hover:text-blue-500 transition-colors duration-200 ml-2 "
+              >
+                haniaaziz095@gmail.com
+              </a>
+                <span className="mx-2">|</span>
+                <a
+                href="https://github.com/HaniaA4"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-400 hover:text-blue-500 transition-colors duration-200"
+                >
+                  <FaGithub size={20} />
+                </a>
+                  <span className="mx-2">|</span>
+                  <a
+                  href="https://www.linkedin.com/in/haniaaziz/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-400 hover:text-blue-500 transition-colors duration-200"
+                  >
+                    <FaLinkedin size={20} />
+                </a>
+              
+              </div>
+            </p>
         </div>
+
         {/* 📝 Contact Form with Glow */}
         <div className="relative">
           {/* Glow effect */}

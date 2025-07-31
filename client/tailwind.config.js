@@ -1,5 +1,5 @@
 module.exports = {
-  darkMode: 'class', // <-- Add this line
+  darkMode: 'class', // Enable dark mode
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
     "./public/index.html"

@@ -6,6 +6,7 @@ import { ChevronDown } from "lucide-react";
 import { Moon, Sun } from "lucide-react";
 import emailjs from '@emailjs/browser'; 
 import { FaGithub, FaLinkedin } from "react-icons/fa";
+import { Footer } from './components/Footer';
 
 
 
@@ -139,6 +140,7 @@ function App() {
           <Contact />
         </main>
       </div>
+      <Footer />
     </>
   );
 }
@@ -235,6 +237,7 @@ const toolsSkills = [
   { link: '#', text: 'Git' },
   { link: '#', text: 'GitHub' },
   { link: '#', text: 'VS Code' },
+  { link: '#', text: 'C' },
   { link: '#', text: 'Dev-C++' },
   { link: '#', text: 'Notion' },
   { link: '#', text: 'Jira' },

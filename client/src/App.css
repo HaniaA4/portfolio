@@ -124,3 +124,22 @@ button:disabled, .btn:disabled {
 .animate-scroll {
   animation: scroll 30s linear infinite;
 }
+
+/* App.css (global scope, not inside @layer or @theme) */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes meteor {
+  0% { transform: rotate(180deg) translateX(0); opacity: 1; }
+  70% { opacity: 1; }
+  100% { transform: rotate(215deg) translateX(-500px); opacity: 0; }
+}
